@@ -310,7 +310,6 @@ class DocumentSegmenter:
         lines = content.split('\n')
         current_segment = []
         current_header = None
-        current_level = 0
         char_pos = 0
         
         for line in lines:
@@ -336,7 +335,6 @@ class DocumentSegmenter:
                         segments.append(segment)
                 
                 # Start new segment
-                current_level = len(header_match.group(1))
                 current_header = header_match.group(2).strip()
                 current_segment = [line]
             else:
@@ -1260,7 +1258,7 @@ async def analyze_and_segment_document(paper_dir: str, force_refresh: bool = Fal
                 # Remove corrupted index file and continue with new analysis
                 try:
                     os.remove(index_file_path)
-                except:
+                except Exception:
                     pass
         
         # Read document content
@@ -1497,14 +1495,14 @@ def _calculate_adaptive_char_limit(document_index: DocumentIndex, query_type: st
         base_limit = 12000
     elif document_index.segmentation_strategy == "algorithm_preserve_integrity":
         base_limit = 15000
-    
+
     # Adjust based on query type
     query_multipliers = {
         "algorithm_extraction": 1.5,  # Algorithms need more context
         "concept_analysis": 1.2,
         "code_planning": 1.3
     }
-    
+
     multiplier = query_multipliers.get(query_type, 1.0)
     return int(base_limit * multiplier)
 
@@ -1513,51 +1511,51 @@ def _calculate_enhanced_keyword_score(segment: DocumentSegment, keywords: List[s
     score = 0.0
     content_lower = segment.content.lower()
     title_lower = segment.title.lower()
-    
+
     for keyword in keywords:
         keyword_lower = keyword.lower()
-        
+
         # Title matching has higher weight
         if keyword_lower in title_lower:
             score += 0.3
-        
+
         # Content matching
         content_matches = content_lower.count(keyword_lower)
         if content_matches > 0:
             # Consider term frequency and position
             frequency_score = min(0.2, content_matches * 0.05)
-            
+
             # Check if in important position (first 25% of content)
             early_content = content_lower[:len(content_lower)//4]
             if keyword_lower in early_content:
                 frequency_score += 0.1
-            
+
             score += frequency_score
-    
+
     return min(0.6, score)  # Limit maximum bonus
 
 def _calculate_completeness_bonus(segment: DocumentSegment, document_index: DocumentIndex) -> float:
     """Calculate content completeness bonus"""
     bonus = 0.0
-    
+
     # Completeness bonus for algorithm and formula content
     if segment.content_type in ['algorithm', 'formula', 'merged']:
         bonus += 0.2
-    
+
     # Long paragraphs usually contain more complete information
     if segment.char_count > 2000:
         bonus += 0.1
     elif segment.char_count > 4000:
         bonus += 0.15
-    
+
     # High importance paragraph bonus
     if segment.relevance_scores.get('algorithm_extraction', 0) > 0.8:
         bonus += 0.1
-    
+
     return min(0.3, bonus)
 
-def _select_segments_with_integrity(scored_segments: List[Tuple], max_segments: int, 
-                                  max_total_chars: int, query_type: str) -> List[Dict]:
+def _select_segments_with_integrity(scored_segments: List[Tuple], max_segments: int,
+                                    max_total_chars: int, query_type: str) -> List[Dict]:
     """Intelligently select segments while maintaining content integrity"""
     selected_segments = []
     total_chars = 0

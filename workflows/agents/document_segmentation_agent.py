@@ -253,7 +253,7 @@ Provide a comprehensive analysis focusing on:
                 "validation_result": validation_result,
                 "overview_data": overview_result
             }
-            
+
         except Exception as e:
             self.logger.error(f"Error validating segmentation quality: {e}")
             return {
@@ -264,7 +264,7 @@ Provide a comprehensive analysis focusing on:
 
 
 async def run_document_segmentation_analysis(
-    paper_dir: str, 
+    paper_dir: str,
     logger: Optional[logging.Logger] = None,
     force_refresh: bool = False
 ) -> Dict[str, Any]:
