@@ -310,7 +310,6 @@ class DocumentSegmenter:
         lines = content.split('\n')
         current_segment = []
         current_header = None
-        current_level = 0
         char_pos = 0
         
         for line in lines:
@@ -336,7 +335,6 @@ class DocumentSegmenter:
                         segments.append(segment)
                 
                 # Start new segment
-                current_level = len(header_match.group(1))
                 current_header = header_match.group(2).strip()
                 current_segment = [line]
             else:
@@ -1260,7 +1258,7 @@ async def analyze_and_segment_document(paper_dir: str, force_refresh: bool = Fal
                 # Remove corrupted index file and continue with new analysis
                 try:
                     os.remove(index_file_path)
-                except:
+                except Exception:
                     pass
         
         # Read document content

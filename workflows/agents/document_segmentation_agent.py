@@ -5,7 +5,6 @@ A lightweight agent that coordinates with the document segmentation MCP server
 to analyze document structure and prepare segments for other agents.
 """
 
-import asyncio
 import os
 import logging
 from typing import Dict, Any, Optional
@@ -253,29 +252,29 @@ Provide a comprehensive analysis focusing on:
                 "validation_result": validation_result,
                 "overview_data": overview_result
             }
-            
-        except Exception as e:
-            self.logger.error(f"Error validating segmentation quality: {e}")
+
+        except Exception:
+            self.logger.error("Error validating segmentation quality")
             return {
                 "status": "error",
                 "paper_dir": paper_dir,
-                "error_message": str(e)
+                "error_message": "Unknown error"
             }
 
 
 async def run_document_segmentation_analysis(
-    paper_dir: str, 
+    paper_dir: str,
     logger: Optional[logging.Logger] = None,
-    force_refresh: bool = False
+    force_refresh: bool = False,
 ) -> Dict[str, Any]:
     """
     Convenience function to run document segmentation analysis.
-    
+
     Args:
         paper_dir: Path to the paper directory
         logger: Optional logger instance
         force_refresh: Whether to force re-analysis
-        
+
     Returns:
         Dict containing analysis results
     """
@@ -284,12 +283,12 @@ async def run_document_segmentation_analysis(
         analysis_result = await agent.analyze_and_prepare_document(
             paper_dir, force_refresh=force_refresh
         )
-        
+
         if analysis_result["status"] == "success":
             # Validate segmentation quality
             validation_result = await agent.validate_segmentation_quality(paper_dir)
             analysis_result["validation"] = validation_result
-        
+
         return analysis_result
 
 
