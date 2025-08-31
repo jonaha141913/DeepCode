@@ -666,7 +666,7 @@ async def orchestrate_document_preprocessing_agent(
                 header = f.read(8)
                 if header.startswith(b'%PDF'):
                     raise IOError(f"File {md_path} is a PDF file, not a text file. Please convert it to markdown format or use PDF processing tools.")
-            
+
             with open(md_path, "r", encoding="utf-8") as f:
                 document_content = f.read()
         except Exception as e:
@@ -1136,7 +1136,6 @@ async def run_chat_planning_agent(user_input: str, logger) -> str:
             print(
                 f"🔄 Making LLM request with params: max_tokens={planning_params.max_tokens}, temperature={planning_params.temperature}"
             )
-
             # Format the input message for the agent
             formatted_message = f"""Please analyze the following coding requirements and generate a comprehensive implementation plan:
 
@@ -1463,7 +1462,6 @@ async def execute_chat_based_planning_pipeline(
 
         # Create workspace directory structure for chat mode
         # First, let's create a temporary directory structure that mimics a paper workspace
-        import time
 
         # Generate a unique paper directory name
         timestamp = str(int(time.time()))

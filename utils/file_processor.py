@@ -191,7 +191,10 @@ class FileProcessor:
             with open(file_path, "rb") as f:
                 header = f.read(8)
                 if header.startswith(b'%PDF'):
-                    raise IOError(f"File {file_path} is a PDF file, not a text file. Please convert it to markdown format or use PDF processing tools.")
+                    raise IOError(
+                        f"File {file_path} is a PDF file, not a text file. "
+                        "Please convert it to markdown format or use PDF processing tools."
+                    )
 
             # Read file content
             # Note: Using async with would be better for large files
@@ -202,7 +205,10 @@ class FileProcessor:
             return content
 
         except UnicodeDecodeError as e:
-            raise IOError(f"Error reading file {file_path}: File encoding is not UTF-8. Original error: {str(e)}")
+            raise IOError(
+                f"Error reading file {file_path}: File encoding is not UTF-8. "
+                f"Original error: {str(e)}"
+            )
         except Exception as e:
             raise IOError(f"Error reading file {file_path}: {str(e)}")
 
@@ -276,8 +282,6 @@ class FileProcessor:
         try:
             # 首先尝试从字符串中提取markdown文件路径
             if isinstance(file_input, str):
-                import re
-
                 file_path_match = re.search(r"`([^`]+\.md)`", file_input)
                 if file_path_match:
                     paper_path = file_path_match.group(1)
@@ -409,8 +413,6 @@ class FileProcessor:
         Returns:
             Optional[Dict]: Extracted JSON as dictionary or None if not found
         """
-        import re
-
         # Try to find JSON in markdown code blocks
         json_pattern = r"```json\s*(\{.*?\})\s*```"
         match = re.search(json_pattern, text, re.DOTALL)
