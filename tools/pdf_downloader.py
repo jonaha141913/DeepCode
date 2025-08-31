@@ -14,16 +14,16 @@ Features:
 - Multi-format support with fallback options
 """
 
+import aiofiles
+import aiohttp
+import io
 import os
 import re
-import aiohttp
-import aiofiles
 import shutil
 import sys
-import io
-from typing import List, Dict, Optional, Any
-from urllib.parse import urlparse, unquote
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+from urllib.parse import unquote, urlparse
 
 from mcp.server import FastMCP
 
@@ -66,8 +66,6 @@ if sys.stdout.encoding != "utf-8":
 
 # 创建 FastMCP 实例
 mcp = FastMCP("smart-pdf-downloader")
-
-
 # 辅助函数
 def format_success_message(action: str, details: Dict[str, Any]) -> str:
     """格式化成功消息"""
